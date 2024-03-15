@@ -1,9 +1,10 @@
-package main
+package db
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 	"time"
 
@@ -48,7 +49,7 @@ type Bots struct {
 	Avatar        string   `json:"avatar"`
 	Tags          []string `json:"tags"`
 	Votes         int      `json:"votes"`
-	Reviews       []string `bson:"reviews"`
+	Reviews       []string `json:"reviews"`
 	Shortdesc     string   `json:"shortdesc"`
 	Staff         string   `json:"staff"`
 	Prefix        string   `json:"prefix"`
@@ -59,14 +60,14 @@ type Bots struct {
 	OwnerName     string   `json:"ownerName"`
 	Analytics     string   `json:"analytics"`
 	Publicity     string   `json:"publicity"`
-	Featured      bool     `bool:"featured"`
-	Approved      bool     `bool:"approved"`
-	Reviewing     bool     `bool:"reviewing"`
+	Featured      bool     `json:"featured"`
+	Approved      bool     `json:"approved"`
+	Reviewing     bool     `json:"reviewing"`
 }
 
 func main() {
 	// Set up MongoDB connection
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://topiclist:topiclist@cluster0.uafa9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
+	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv("olddburl")))
 	if err != nil {
 		log.Fatalf("Error creating MongoDB client: %v", err)
 	}
