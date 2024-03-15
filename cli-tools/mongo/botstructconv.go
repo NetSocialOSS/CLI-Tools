@@ -1,4 +1,4 @@
-package tools
+package main
 
 import (
 	"context"
@@ -59,6 +59,7 @@ type Bots struct {
 	OwnerAvatar   string   `json:"ownerAvatar"`
 	OwnerName     string   `json:"ownername"`
 	Analytics     string   `json:"analytics"`
+	Approved      string   `json:"approved"`
 }
 
 func main() {
@@ -213,7 +214,8 @@ func transformDocument(doc OriginalBot) (Bots, error) {
 		Support:       doc.Support,
 		OwnerAvatar:   "", // Missing field in OriginalBot
 		OwnerName:     doc.OwnerName,
-		Analytics:     "", // Missing field in OriginalBot
-		Publicity:     "", // Missing field in OriginalBot
+		Analytics:     "",       // Missing field in OriginalBot
+		Publicity:     "public", // Missing field in OriginalBot
+		Approved:      "true",
 	}, nil
 }
