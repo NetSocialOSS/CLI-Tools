@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 	"time"
 
@@ -43,8 +42,8 @@ type OriginalBot struct {
 type Bots struct {
 	ID            string   `json:"id"`
 	Name          string   `json:"name"`
-	Discriminator string   `json:"Discriminator"`
-	Website       string   `json:"Website URL"`
+	Discriminator string   `json:"discriminator"`
+	Website       string   `json:"website"`
 	Github        string   `json:"github"`
 	Avatar        string   `json:"avatar"`
 	Tags          []string `json:"tags"`
@@ -53,28 +52,34 @@ type Bots struct {
 	Shortdesc     string   `json:"shortdesc"`
 	Staff         string   `json:"staff"`
 	Prefix        string   `json:"prefix"`
-	Publicity     string   `json:"public"`
 	Longdesc      string   `json:"longdesc"`
+	Token         string   `json:"token"`
 	Support       string   `json:"support"`
 	OwnerAvatar   string   `json:"ownerAvatar"`
-	OwnerName     string   `json:"ownername"`
+	OwnerName     string   `json:"ownerName"`
 	Analytics     string   `json:"analytics"`
-	Approved      string   `json:"approved"`
+	Publicity     string   `json:"publicity"`
+	Featured      bool     `bool:"featured"`
+	Approved      bool     `bool:"approved"`
+	Reviewing     bool     `bool:"reviewing"`
 }
 
 func main() {
 	// Set up MongoDB connection
-	client, err := mongo.NewClient(options.Client().ApplyURI((os.Getenv("oldmongodburl"))))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://topiclist:topiclist@cluster0.uafa9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error creating MongoDB client: %v", err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error connecting to MongoDB: %v", err)
 	}
 	defer client.Disconnect(ctx)
+
+	// Log successful connection
+	log.Println("Connected to MongoDB")
 
 	// Access a database and a collection
 	db := client.Database("myFirstDatabase")
@@ -208,14 +213,16 @@ func transformDocument(doc OriginalBot) (Bots, error) {
 		Votes:         votes,
 		Reviews:       []string{}, // Empty for now, add logic if needed
 		Shortdesc:     doc.ShortDesc,
-		Staff:         "", // Add logic to get staff info if available
 		Prefix:        doc.Prefix,
 		Longdesc:      doc.LongDesc,
 		Support:       doc.Support,
 		OwnerAvatar:   "", // Missing field in OriginalBot
 		OwnerName:     doc.OwnerName,
+		Token:         "",
 		Analytics:     "",       // Missing field in OriginalBot
 		Publicity:     "public", // Missing field in OriginalBot
-		Approved:      "true",
+		Approved:      true,
+		Reviewing:     false,
+		Featured:      false,
 	}, nil
 }
