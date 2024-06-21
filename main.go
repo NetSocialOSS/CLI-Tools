@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func main() {
+func db() {
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
